@@ -1,0 +1,81 @@
+name: Auto Release APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+        
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Build Release APK
+      run: ./gradlew assembleRelease --stacktrace
+      
+    - name: Get short SHA
+      id: get_sha
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      
+    - name: Get current date
+      id: get_date
+      run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bluecord-pro-${{ steps.get_date.outputs.DATE }}-${{ steps.get_sha.outputs.SHORT_SHA }}
+        path: app/build/outputs/apk/release/*.apk
+        retention-days: 90
+        
+    - name: Create/Update Latest Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: latest
+        name: Latest Build
+        files: app/build/outputs/apk/release/*.apk
+        body: |
+          ## 📱 Bluecord Pro - Latest Build
+          
+          **Build Date:** ${{ steps.get_date.outputs.DATE }}
+          **Commit:** ${{ steps.get_sha.outputs.SHORT_SHA }}
+          
+          ### ⬇️ Download APK
+          Click on the APK file below to download and install directly on your Android device.
+          
+          ### 📋 Installation Instructions
+          1. Download the APK file (click on it below)
+          2. On your Android device, go to Settings → Security → Enable "Install from Unknown Sources"
+          3. Open the downloaded APK file to install
+          4. Enjoy Bluecord Pro!
+          
+          ### ✨ Features
+          - 🎤 Voice changer with 8 effects (Chipmunk, Deep Voice, Robot, Echo, Reverb, Alien, Radio, Telephone)
+          - 🎵 Enhanced audio quality settings (Low, Standard, High, Ultra)
+          - 🔇 Advanced noise reduction
+          - 📢 Auto gain control
+          - 💎 All original Bluecord features
+          
+          ---
+          
+          This is an automatically generated release from the latest commit on the main branch.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
