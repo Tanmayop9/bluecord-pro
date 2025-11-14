@@ -115,6 +115,7 @@ public final class PreferenceKeys {
     public static final String ALERT_UPDATE_LAST_SHOWN = "blue.update.ts";
     public static final String ALERT_UPDATE_LAST_SHOWN_NOTIFICATION = "blue.update.notification.ts";
     public static final String ENABLE_OUTGOING_VOICE_MESSAGES = "blue.enable.outgoing.voice";
+    public static final String VOICE_EFFECT_SELECTION = "blue.voice.effect";
 
     // Dead preference keys that should NOT be reused
 

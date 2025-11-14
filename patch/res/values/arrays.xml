@@ -136,4 +136,26 @@
         <item>When Nickname Is Set</item>
         <item>Off</item>
     </string-array>
+	<string-array name="voice_effect_modes">
+        <item>Normal</item>
+        <item>Chipmunk</item>
+        <item>Deep Voice</item>
+        <item>Robot</item>
+        <item>Echo</item>
+        <item>Reverb</item>
+        <item>Alien</item>
+        <item>Radio</item>
+        <item>Telephone</item>
+    </string-array>
+	<string-array name="voice_effect_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
 </resources>

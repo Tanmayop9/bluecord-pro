@@ -3,6 +3,7 @@ package mods.audio.view.record
 import android.os.Build
 import mods.audio.converters.AudioConverter
 import mods.audio.converters.TranscodingProgressListener
+import mods.audio.effects.VoiceEffect
 import mods.audio.utils.AudioMessageUtils
 import mods.audio.view.record.impl.AbstractAudioRecorder
 import mods.audio.view.record.impl.BasicAudioRecorder
@@ -33,17 +34,20 @@ class AudioRecorder(private val manager: VoiceManager) {
     private val jobId = UUID.randomUUID().toString().substring(0, 8)
     private val audioOutputFile = File(FileUtils.voiceCacheDir, "$jobId.pcm16")
     private val oggFile = File(FileUtils.voiceCacheDir, "$jobId.ogg")
+    
+    private var currentEffect: VoiceEffect = VoiceEffect.NONE
 
-    fun startRecording(): Boolean {
+    fun startRecording(voiceEffect: VoiceEffect = VoiceEffect.NONE): Boolean {
         return runCatchingOrLog {
             audioOutputFile.delete()
             audioOutputFile.createNewFile()
+            currentEffect = voiceEffect
             recorder = if (USE_PCM16_RECORDER) {
-                Pcm16AudioRecorder.start(audioOutputFile)
+                Pcm16AudioRecorder.start(audioOutputFile, voiceEffect)
             } else {
                 BasicAudioRecorder.start(audioOutputFile)
             }
-            LogUtils.log(TAG, "recording started")
+            LogUtils.log(TAG, "recording started with effect: ${voiceEffect.displayName}")
             return true
         }.isSuccess
     }

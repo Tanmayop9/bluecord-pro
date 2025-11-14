@@ -29,6 +29,7 @@ import com.lytefast.flexinput.fragment.FlexInputFragment
 import com.lytefast.flexinput.viewmodel.FlexInputState
 import mods.ThemingTools
 import mods.audio.converters.AudioConstants
+import mods.audio.effects.VoiceEffectSettings
 import mods.audio.utils.AudioMessageUtils
 import mods.audio.utils.MediaMetadataRetrieverCompat
 import mods.audio.view.record.timer.TimerWrapper
@@ -126,7 +127,8 @@ class VoiceManager(
             if (isRecording.get()) {
                 finishRecording()
             } else if (checkAudioPermissions()) {
-                if (recorder.startRecording()) {
+                val effect = VoiceEffectSettings.getSelectedEffect(fragment.requireContext())
+                if (recorder.startRecording(effect)) {
                     onRecordingStart()
                 } else {
                     ToastUtil.toastShort("Recording failed to start")

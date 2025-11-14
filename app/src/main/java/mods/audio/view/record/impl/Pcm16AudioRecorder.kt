@@ -5,6 +5,8 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import mods.audio.converters.AudioConstants
+import mods.audio.effects.VoiceEffect
+import mods.audio.effects.VoiceEffectProcessor
 import mods.promise.runCatchingOrLog
 import mods.utils.LogUtils
 import mods.utils.ThreadUtils
@@ -16,7 +18,8 @@ class Pcm16AudioRecorder(
     outputFile: File,
     private val recorder: AudioRecord,
     private val isPaused: AtomicBoolean,
-    private val isRecording: AtomicBoolean
+    private val isRecording: AtomicBoolean,
+    private val voiceEffect: VoiceEffect
 ) : AbstractAudioRecorder(outputFile) {
 
     override fun isPausingSupported(): Boolean {
@@ -48,7 +51,10 @@ class Pcm16AudioRecorder(
 
         @JvmStatic
         @SuppressLint("MissingPermission")
-        fun start(outputFile: File): AbstractAudioRecorder {
+        fun start(outputFile: File, effect: VoiceEffect = VoiceEffect.NONE): AbstractAudioRecorder {
+            // Reset effect processors for new recording
+            VoiceEffectProcessor.reset()
+            
             val minBufferSize = AudioRecord.getMinBufferSize(
                 AudioConstants.SAMPLE_RATE,
                 if (AudioConstants.CHANNEL_COUNT == 2) AudioFormat.CHANNEL_IN_STEREO else AudioFormat.CHANNEL_IN_MONO,
@@ -93,15 +99,22 @@ class Pcm16AudioRecorder(
                                 continue
                             }
 
+                            // Apply voice effect if enabled
+                            val processedBuffer = if (effect != VoiceEffect.NONE) {
+                                VoiceEffectProcessor.applyEffect(buffer, read, effect)
+                            } else {
+                                buffer
+                            }
+
                             // Write to original file
-                            rawAudioOut.write(buffer, 0, read)
+                            rawAudioOut.write(processedBuffer, 0, read)
                         }
                         rawAudioOut.flush()
                     }
                 }
             }
 
-            return Pcm16AudioRecorder(outputFile, recorder, isPaused, isRecording)
+            return Pcm16AudioRecorder(outputFile, recorder, isPaused, isRecording, effect)
         }
     }
 }
