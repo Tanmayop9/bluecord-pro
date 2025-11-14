@@ -1,12 +1,16 @@
 package mods.audio.view.record.impl
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import androidx.preference.PreferenceManager
 import mods.audio.converters.AudioConstants
 import mods.audio.effects.VoiceEffect
 import mods.audio.effects.VoiceEffectProcessor
+import mods.audio.enhancement.AudioEnhancer
+import mods.constants.PreferenceKeys
 import mods.promise.runCatchingOrLog
 import mods.utils.LogUtils
 import mods.utils.ThreadUtils
@@ -19,7 +23,8 @@ class Pcm16AudioRecorder(
     private val recorder: AudioRecord,
     private val isPaused: AtomicBoolean,
     private val isRecording: AtomicBoolean,
-    private val voiceEffect: VoiceEffect
+    private val voiceEffect: VoiceEffect,
+    private val context: Context
 ) : AbstractAudioRecorder(outputFile) {
 
     override fun isPausingSupported(): Boolean {
@@ -51,9 +56,14 @@ class Pcm16AudioRecorder(
 
         @JvmStatic
         @SuppressLint("MissingPermission")
-        fun start(outputFile: File, effect: VoiceEffect = VoiceEffect.NONE): AbstractAudioRecorder {
+        fun start(outputFile: File, effect: VoiceEffect = VoiceEffect.NONE, context: Context): AbstractAudioRecorder {
             // Reset effect processors for new recording
             VoiceEffectProcessor.reset()
+            AudioEnhancer.reset()
+            
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val noiseReduction = prefs.getBoolean(PreferenceKeys.AUDIO_NOISE_REDUCTION, false)
+            val autoGain = prefs.getBoolean(PreferenceKeys.AUDIO_AUTO_GAIN, false)
             
             val minBufferSize = AudioRecord.getMinBufferSize(
                 AudioConstants.SAMPLE_RATE,
@@ -99,11 +109,21 @@ class Pcm16AudioRecorder(
                                 continue
                             }
 
+                            var processedBuffer = buffer
+                            
+                            // Apply noise reduction if enabled
+                            if (noiseReduction) {
+                                processedBuffer = AudioEnhancer.applyNoiseReduction(processedBuffer, read)
+                            }
+                            
+                            // Apply auto gain if enabled
+                            if (autoGain) {
+                                processedBuffer = AudioEnhancer.applyAutoGain(processedBuffer, read)
+                            }
+
                             // Apply voice effect if enabled
-                            val processedBuffer = if (effect != VoiceEffect.NONE) {
-                                VoiceEffectProcessor.applyEffect(buffer, read, effect)
-                            } else {
-                                buffer
+                            if (effect != VoiceEffect.NONE) {
+                                processedBuffer = VoiceEffectProcessor.applyEffect(processedBuffer, read, effect)
                             }
 
                             // Write to original file
@@ -114,7 +134,7 @@ class Pcm16AudioRecorder(
                 }
             }
 
-            return Pcm16AudioRecorder(outputFile, recorder, isPaused, isRecording, effect)
+            return Pcm16AudioRecorder(outputFile, recorder, isPaused, isRecording, effect, context)
         }
     }
 }

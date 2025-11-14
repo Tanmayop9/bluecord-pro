@@ -19,11 +19,16 @@ Transform your voice messages with powerful real-time voice effects:
 
 Effects are applied in real-time during recording and work with all voice messages. Access the voice effect settings in `Bluecord Mods > Chat > Voice Effect`.
 
-### Enhanced Audio Quality
+### Enhanced Audio Quality Settings
+- **Quality Presets**: Choose from Low (32kbps), Standard (64kbps), High (128kbps), or Ultra (192kbps)
+- **Noise Reduction**: Advanced noise gate and smoothing algorithms to reduce background noise
+- **Auto Gain Control**: Automatically normalize volume levels for consistent audio
 - Real-time PCM16 audio processing
 - Advanced DSP algorithms for high-quality effects
-- Support for multiple voice transformation effects
+- Support for multiple simultaneous effects
 - Optimized for low latency
+
+All audio settings can be configured in `Bluecord Mods > Chat` section.
 
 ## Original Bluecord Features
 

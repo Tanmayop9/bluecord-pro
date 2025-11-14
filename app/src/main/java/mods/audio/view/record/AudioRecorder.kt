@@ -1,5 +1,6 @@
 package mods.audio.view.record
 
+import android.content.Context
 import android.os.Build
 import mods.audio.converters.AudioConverter
 import mods.audio.converters.TranscodingProgressListener
@@ -37,13 +38,13 @@ class AudioRecorder(private val manager: VoiceManager) {
     
     private var currentEffect: VoiceEffect = VoiceEffect.NONE
 
-    fun startRecording(voiceEffect: VoiceEffect = VoiceEffect.NONE): Boolean {
+    fun startRecording(voiceEffect: VoiceEffect = VoiceEffect.NONE, context: Context): Boolean {
         return runCatchingOrLog {
             audioOutputFile.delete()
             audioOutputFile.createNewFile()
             currentEffect = voiceEffect
             recorder = if (USE_PCM16_RECORDER) {
-                Pcm16AudioRecorder.start(audioOutputFile, voiceEffect)
+                Pcm16AudioRecorder.start(audioOutputFile, voiceEffect, context)
             } else {
                 BasicAudioRecorder.start(audioOutputFile)
             }

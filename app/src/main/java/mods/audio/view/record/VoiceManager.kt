@@ -128,7 +128,7 @@ class VoiceManager(
                 finishRecording()
             } else if (checkAudioPermissions()) {
                 val effect = VoiceEffectSettings.getSelectedEffect(fragment.requireContext())
-                if (recorder.startRecording(effect)) {
+                if (recorder.startRecording(effect, fragment.requireContext())) {
                     onRecordingStart()
                 } else {
                     ToastUtil.toastShort("Recording failed to start")

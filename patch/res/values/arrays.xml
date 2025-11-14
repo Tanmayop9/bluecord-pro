@@ -158,4 +158,16 @@
         <item>7</item>
         <item>8</item>
     </string-array>
+	<string-array name="audio_quality_modes">
+        <item>Low (32kbps)</item>
+        <item>Standard (64kbps)</item>
+        <item>High (128kbps)</item>
+        <item>Ultra (192kbps)</item>
+    </string-array>
+	<string-array name="audio_quality_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>
