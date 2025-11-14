@@ -46,7 +46,21 @@ All source code to build Bluecord is fully present, and you can verify its legit
 Anyone claiming otherwise is intentionally lying to you for their own benefit (given this repo exists) and / or cannot write a single line of code if you asked them.
 
 # Download
-The app has built-in update mechanisms, so you'll probably only need to install once.
+
+## 📱 Get the APK Directly
+
+**[⬇️ Download Latest APK](https://github.com/Tanmayop9/bluecord-pro/releases/latest)** - Click here to get the latest build!
+
+### Installation Instructions:
+1. Click the download link above
+2. Download the `.apk` file from the latest release
+3. On your Android device, enable "Install from Unknown Sources" in Settings → Security
+4. Open the downloaded APK file and install
+5. Done! The app has built-in update mechanisms, so you'll probably only need to install once.
+
+### Alternative Download Options:
+- **Latest Build**: Automatically updated with every code change - [Download Here](https://github.com/Tanmayop9/bluecord-pro/releases/tag/latest)
+- **All Releases**: Browse all versions - [Releases Page](https://github.com/Tanmayop9/bluecord-pro/releases)
 
 # Notes
 
