@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.protobuf'
 
 android {
     namespace 'com.discord'
@@ -62,6 +63,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         main.java.srcDirs += 'src/main/stubs'
         main.java.srcDirs += 'src/main/generated'
+        main.proto.srcDirs += 'protos'
     }
 
     dependenciesInfo {
@@ -76,6 +78,21 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.25.3'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
     }
 }
 
